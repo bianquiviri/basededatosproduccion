@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mysql:5.7
+    platform: linux/amd64 # Cambiado para adaptarse a procesadores M1/M2 de Apple
+    restart: always
+    environment:
+      TZ: "Europe/Madrid"
+      MYSQL_DATABASE: 'siseacad'
+      MYSQL_USER: 'sisezend'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: '!N1k00905'
+      MYSQL_MAX_CONNECTIONS: 500
+      MYSQL_INNODB_BUFFER_POOL_SIZE: 2G
+      MYSQL_INNODB_LOG_FILE_SIZE: 512M
+      MYSQL_INNODB_LOG_BUFFER_SIZE: 256M
+      MYSQL_INNODB_FLUSH_LOG_AT_TRX_COMMIT: 2
+      MYSQL_INNODB_FILE_PER_TABLE: 1
+    ports:
+      - '3307:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ~/data/mysql:/var/lib/mysql

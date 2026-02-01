@@ -1,0 +1,17 @@
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    platform: linux/amd64
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: 192.168.191.138
+      PMA_PORT: 3307
+      PMA_USER: root
+      PMA_PASSWORD: "!N1k00905"
+      UPLOAD_LIMIT: 1G
+      MEMORY_LIMIT: 6G
+    ports:
+      - "8080:80"
+    volumes:
+      - /sessions
+    restart: always

@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.44
+ #   platform: linux/arm64
+    container_name: ${MYSQL_CONTAINER_NAME:-mysql_db}
+    restart: unless-stopped
+    
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_X_PORT:-33060}:33060"
+    
+    env_file:
+      - .env
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST:-%}
+      TZ: ${TZ:-UTC}
+      MYSQL_INITDB_SKIP_TZINFO: ${MYSQL_INITDB_SKIP_TZINFO:-1}
+    
+    deploy:
+      resources:
+        limits:
+          memory: ${MYSQL_MEMORY_LIMIT:-2G}
+          cpus: '${MYSQL_CPU_LIMIT:-2.0}'
+        reservations:
+          memory: ${MYSQL_MEMORY_RESERVATION:-512M}
+          cpus: '${MYSQL_CPU_RESERVATION:-0.5}'
+    
+    volumes:
+      # RUTAS ABSOLUTAS o relativas al directorio actual
+      - ${MYSQL_DATA_PATH:-./data/mysql}:/var/lib/mysql
+      - ./mysql-config:/etc/mysql/conf.d
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - ${MYSQL_BACKUP_PATH:-./backups}:/backups
+        
+    # SOLO UNA RED
+    networks:
+      - mysql_network
+    
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=${MYSQL_CHARSET:-utf8mb4}
+      - --collation-server=${MYSQL_COLLATION:-utf8mb4_unicode_ci}
+      - --max_connections=${MYSQL_MAX_CONNECTIONS:-100}
+      - --innodb_buffer_pool_size=${MYSQL_INNODB_BUFFER_POOL_SIZE:-1G}
+      - --bind-address=0.0.0.0
+    
+    healthcheck:
+      test: 
+        [
+          "CMD", "mysqladmin", "ping", 
+          "-h", "localhost", 
+          "-uroot", 
+          "-p${MYSQL_ROOT_PASSWORD}"
+        ]
+      timeout: ${MYSQL_HEALTHCHECK_TIMEOUT:-20s}
+      retries: ${MYSQL_HEALTHCHECK_RETRIES:-10}
+      start_period: ${MYSQL_HEALTHCHECK_START_PERIOD:-30s}
+      interval: ${MYSQL_HEALTHCHECK_INTERVAL:-10s}
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${MYSQL_LOG_MAX_SIZE:-10m}"
+        max-file: "${MYSQL_LOG_MAX_FILES:-3}"
+
+volumes:
+  mysql_data:
+    name: ${MYSQL_DATA_VOLUME_NAME:-mysql_data_volume}
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MYSQL_DATA_PATH:-./data/mysql}
+
+# CONFIGURACIÓN DE UNA SOLA RED
+networks:
+  mysql_network:
+    name: ${MYSQL_NETWORK_NAME:-mysql_network}
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${MYSQL_SUBNET:-172.20.0.0/24}
+          gateway: ${MYSQL_GATEWAY:-172.20.0.1}
