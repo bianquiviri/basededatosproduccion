@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     
     ports:
-      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
-      - "127.0.0.1:${MYSQL_X_PORT:-33060}:33060"
+      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_X_PORT:-33060}:33060"
     
     env_file:
       - .env
@@ -43,7 +43,7 @@ services:
       - --collation-server=${MYSQL_COLLATION:-utf8mb4_unicode_ci}
       - --max_connections=${MYSQL_MAX_CONNECTIONS:-100}
       - --innodb_buffer_pool_size=${MYSQL_INNODB_BUFFER_POOL_SIZE:-1G}
-      - --bind-address=0.0.0.0
+      - --bind-address=${MYSQL_BIND_ADDRESS:-0.0.0.0}
     
     healthcheck:
       test: 
