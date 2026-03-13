@@ -1,1 +1,6 @@
-/data
+# MySQL data and generated files
+data/
+backups/
+*.log
+.env
+
