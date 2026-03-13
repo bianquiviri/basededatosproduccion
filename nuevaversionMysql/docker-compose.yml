@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     
     ports:
-      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
-      - "127.0.0.1:${MYSQL_X_PORT:-33060}:33060"
+      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_X_PORT:-33060}:33060"
     
     env_file:
       - .env
