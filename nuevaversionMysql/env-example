@@ -1,5 +1,8 @@
 # ============================================
 # CONFIGURACIÓN SIMPLIFICADA - MySQL M1
+
+## ============================================
+# CONFIGURACIÓN SIMPLIFICADA - MySQL M1
 # ============================================
 
 # NOMBRES Y PUERTOS
@@ -7,11 +10,14 @@ MYSQL_CONTAINER_NAME=mysql_db
 MYSQL_PORT=3306
 MYSQL_X_PORT=33060
 
+# DIRECCIÓN DE ENLACE (0.0.0.0 para remoto, 127.0.0.1 para local)
+MYSQL_BIND_ADDRESS=0.0.0.0
+
 # CREDENCIALES (¡CAMBIA ESTAS!)
-MYSQL_ROOT_PASSWORD=RootPassword123!
+MYSQL_ROOT_PASSWORD=!N1k00905plasticbed
 MYSQL_DATABASE=mydatabase
-MYSQL_USER=myuser
-MYSQL_PASSWORD=UserPassword456!
+MYSQL_USER=bianquiviri
+MYSQL_PASSWORD=!N1k00905arcade
 MYSQL_ROOT_HOST=%
 
 # CONFIGURACIÓN DE RED (UNA SOLA)
